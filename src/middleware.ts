@@ -1,18 +1,37 @@
 import {NextRequest, NextResponse} from "next/server";
+import {getSessionCookie} from "better-auth/cookies";
 import {geistMono} from "./app/assets/fonts/fonts";
 
-export async function middleware(req: NextRequest) {
-    let reqCookie = req.cookies.get("n-t-a-f");
-    if (reqCookie) {
-        return NextResponse.next();
-    }
-    let resp = new NextResponse();
-    resp.cookies.set("n-t-a-f", geistMono.className, {
+export default async function middleware(request: NextRequest) {
+    const cookieName = "n_t_a_f";
+    const expireAt = {
         maxAge: 1000 * 60 * 60 * 24 * 365 * 2,
-    });
-    return resp;
+    };
+    const sessionCookie = getSessionCookie(request);
+    const fontCookie = request.cookies.get(cookieName);
+    if (!sessionCookie) {
+        if (!fontCookie) {
+            const resp = NextResponse.redirect(
+                new URL("http://localhost:3000/auth", request.nextUrl)
+            );
+            resp.cookies.set(cookieName, geistMono.className, expireAt);
+            return resp;
+        }
+        const resp = NextResponse.redirect(
+            new URL("http://localhost:3000/auth", request.nextUrl)
+        );
+        return resp;
+    }
+    if (!fontCookie) {
+        return NextResponse.next().cookies.set(
+            cookieName,
+            geistMono.className,
+            expireAt
+        );
+    }
+    return NextResponse.next();
 }
 
 export const config = {
-    matcher: "/:path*",
+    matcher: ["/((?!api|_next/static|_next/image|auth).*)"],
 };

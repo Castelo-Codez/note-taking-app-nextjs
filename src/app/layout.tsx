@@ -15,12 +15,12 @@ export default async function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    let fontCookie = (await cookies()).get("n-t-a-f");
+    let fontCookie = (await cookies()).get("n_t_a_f");
     let value = fontCookie?.value;
     return (
         <html lang="en">
             <body
-                className={` ${geistMono.className} ${geistSans.className} ${value} antialiased`}
+                className={` ${geistMono.className} ${geistSans.className} ${value} antialiased min-h-screen`}
             >
                 {children}
             </body>
