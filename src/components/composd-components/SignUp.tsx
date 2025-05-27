@@ -12,6 +12,9 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
+import {authClient} from "@/lib/authClient";
+import {redirect} from "next/navigation";
+import {toast} from "sonner";
 const formSchema = z.object({
     username: z
         .string()
@@ -45,12 +48,55 @@ export default function SignUp() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
     });
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        const {username, email, password} = values;
+        const {data, error} = await authClient.signUp.email({
+            name: username,
+            email,
+            password,
+        });
+        if (error) {
+            const {status} = error;
+            if (status == 422) {
+                toast("Email Already Exists", {
+                    action: {
+                        label: "cancel",
+                        onClick: (e) => e.currentTarget.remove(),
+                    },
+                    description: "Please Choose Another Account",
+                    descriptionClassName: " text-red-500",
+                    style: {
+                        border: "1px solid red",
+                        color: "red",
+                        backgroundColor: "black",
+                    },
+                });
+            } else {
+                toast("Error Connection", {
+                    action: {
+                        label: "cancel",
+                        onClick: (e) => e.currentTarget.remove(),
+                    },
+                    description: "Please Try Again Later",
+                    descriptionClassName: " text-red-500",
+                    style: {
+                        border: "1px solid red",
+                        color: "red",
+                        backgroundColor: "black",
+                    },
+                });
+            }
+        }
+        if (data) {
+            const {token} = data;
+            if (token) {
+                redirect("/");
+            }
+        }
     }
     return (
         <Form {...form}>
-            <section className=" flex flex-col gap-y-8 min-w-[250px]  sm:w-[400px] border border-border py-8 p-4">
+            <section className="  flex flex-col gap-y-8 min-w-[250px]  sm:w-[400px] border border-border py-8 p-4">
                 <section className=" flex items-center justify-center">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -59,12 +105,12 @@ export default function SignUp() {
                         fill="none"
                         color="#FFF"
                     >
-                        <g clip-path="url(#a)">
+                        <g clipPath="url(#a)">
                             <g
-                                fill="#000000"
-                                fill-rule="evenodd"
-                                clip-path="url(#b)"
-                                clip-rule="evenodd"
+                                className=" fill-black dark:fill-white"
+                                fillRule="evenodd"
+                                clipPath="url(#b)"
+                                clipRule="evenodd"
                             >
                                 <path d="M27.4 2.158C26.367.192 22.974.81 20.04 1.595 7.291 6.294 2.781 15.842 1.196 21.53a1.051 1.051 0 0 0-.13.482c-.628 2.413-.713 4.022-.714 4.075a1.048 1.048 0 0 0 1.003 1.09c.016.002.031.002.047.002.558 0 1.023-.441 1.048-1.005.007-.171.072-1.346.468-3.101 3.511-.149 7.046-1.456 10.518-3.898a1.05 1.05 0 0 0 .049-1.681l-1.602-1.269 5.256-.515c.214-.02.416-.106.58-.246a79.991 79.991 0 0 0 5.333-5.056c3.872-4.06 5.211-6.604 4.348-8.25ZM21.178 25.08h-8.974a1.05 1.05 0 0 0 0 2.1h8.974a1.05 1.05 0 0 0 0-2.1Z"></path>
                             </g>
@@ -142,6 +188,7 @@ export default function SignUp() {
                                 <FormLabel>Password</FormLabel>
                                 <FormControl>
                                     <Input
+                                        type="password"
                                         placeholder="#ad2adasd1asEw21ZPZAD2zxca,mfdeir"
                                         {...field}
                                     />
