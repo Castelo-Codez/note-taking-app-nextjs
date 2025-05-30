@@ -3,6 +3,7 @@ import {getSessionCookie} from "better-auth/cookies";
 import {geistMono} from "./app/assets/fonts/fonts";
 
 export default async function middleware(request: NextRequest) {
+    const requestPath = request.nextUrl;
     const cookieName = "n_t_a_f";
     const expireAt = {
         maxAge: 1000 * 60 * 60 * 24 * 365 * 2,
