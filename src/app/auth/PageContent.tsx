@@ -1,7 +1,6 @@
 import SignUp from "@/components/composd-components/SignUp";
 import SignIn from "@/components/composd-components/SignIn";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-
 export default function PageContent() {
     return (
         <section className=" min-h-screen relative flex items-center justify-center px-4">
