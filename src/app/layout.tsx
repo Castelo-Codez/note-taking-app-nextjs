@@ -16,8 +16,8 @@ export default async function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    let fontCookie = (await cookies()).get("n_t_a_f");
-    let value = fontCookie?.value;
+    const fontCookie = (await cookies()).get("n_t_a_f");
+    const value = fontCookie?.value;
     return (
         <html lang="en" suppressHydrationWarning>
             <body

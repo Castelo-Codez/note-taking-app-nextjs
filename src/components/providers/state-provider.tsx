@@ -20,16 +20,18 @@ export const GlobalStateProvider = ({
     const [notes, setNewNotes] = useState<Note[]>([]);
     const [currentRoute, setNewCurrentRoute] = useState<string>("all notes");
     const [currentRouteIndex, setNewCurrentRouteIndex] = useState<number>(0);
+    const [searchKeyword, setNewsearchKeyword] = useState("");
     return (
         <GlobalStateContext.Provider
             //@ts-expect-error
             value={{
-                notesHandler: [notes, setNewNotes],
-                currentRouteHandler: [currentRoute, setNewCurrentRoute],
-                CurrentRouteIndexHandler: [
+                notesHandler: {notes, setNewNotes},
+                currentRouteHandler: {currentRoute, setNewCurrentRoute},
+                CurrentRouteIndexHandler: {
                     currentRouteIndex,
                     setNewCurrentRouteIndex,
-                ],
+                },
+                searchKeywordHandler: {searchKeyword, setNewsearchKeyword},
             }}
         >
             {children}

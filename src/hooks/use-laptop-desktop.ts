@@ -2,22 +2,22 @@ import * as React from "react";
 
 const MOBILE_BREAKPOINT = 992;
 
-export function useIsTablet() {
-    const [isTablet, setIsTablet] = React.useState<boolean | undefined>(
+export function useIsLargeScreen() {
+    const [largeScreen, setlargeScreen] = React.useState<boolean | undefined>(
         undefined
     );
 
     React.useEffect(() => {
         const mql = window.matchMedia(
-            `(max-width: ${MOBILE_BREAKPOINT - 1}px)`
+            `(min-width: ${MOBILE_BREAKPOINT - 1}px)`
         );
         const onChange = () => {
-            setIsTablet(window.innerWidth < MOBILE_BREAKPOINT);
+            setlargeScreen(window.innerWidth < MOBILE_BREAKPOINT);
         };
         mql.addEventListener("change", onChange);
-        setIsTablet(window.innerWidth < MOBILE_BREAKPOINT);
+        setlargeScreen(window.innerWidth < MOBILE_BREAKPOINT);
         return () => mql.removeEventListener("change", onChange);
     }, []);
 
-    return !!isTablet;
+    return !!largeScreen;
 }

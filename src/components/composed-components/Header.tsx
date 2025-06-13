@@ -3,12 +3,17 @@ import {useIsMobile} from "@/hooks/use-mobile";
 import CurrentRoute from "./CurrentRoute";
 import Search from "./SearchInput";
 import {Settings} from "lucide-react";
-import Link from "next/link";
 import Logo from "./Logo";
 import {cn} from "@/lib/utils";
+import {useRouter} from "next/navigation";
+import {useGlobalState} from "../providers/state-provider";
 
 export default function Header() {
     const isMobile = useIsMobile();
+    const store = useGlobalState();
+    //@ts-expect-error
+    const {setNewCurrentRoute} = store.currentRouteHandler;
+    const router = useRouter();
     return (
         <header
             className={cn(
@@ -21,9 +26,17 @@ export default function Header() {
             {!isMobile && (
                 <div className=" flex gap-x-4 items-center">
                     <Search />
-                    <Link href={"/settings"} className=" cursor-pointer">
+                    <button
+                        aria-label="settings link"
+                        title="go to settings page"
+                        onClick={() => {
+                            router.replace("http://localhost:3000/settings");
+                            setNewCurrentRoute("settings");
+                        }}
+                        className="flex justify-between items-center p-1  cursor-pointer"
+                    >
                         <Settings width={20} />
-                    </Link>
+                    </button>
                 </div>
             )}
         </header>

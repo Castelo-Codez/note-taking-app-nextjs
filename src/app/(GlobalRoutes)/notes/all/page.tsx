@@ -1,11 +1,15 @@
-import MainSection from "@/components/composd-components/MainNoteHanderSection";
-import Nav from "@/components/composd-components/Nav";
+
+import Nav from "@/components/composed-components/Nav";
+import React from "react";
+import type {Metadata} from "next";
+export const metadata: Metadata = {
+    title: "All Notes",
+    description: "Note Taking App | All Notes",
+};
 export default function All() {
     return (
         <>
-            <MainSection>
-                <Nav />
-            </MainSection>
+            <Nav />
         </>
     );
 }

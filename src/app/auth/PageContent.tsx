@@ -1,5 +1,5 @@
-import SignUp from "@/components/composd-components/SignUp";
-import SignIn from "@/components/composd-components/SignIn";
+import SignUp from "@/components/composed-components/SignUp";
+import SignIn from "@/components/composed-components/SignIn";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 export default function PageContent() {
     return (
