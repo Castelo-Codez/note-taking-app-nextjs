@@ -9,7 +9,7 @@ export default function NoteHandler() {
         <>
             <section
                 className={cn(
-                    "pl-8  grid min-h-full grid-cols-1 lg:grid-cols-[3fr_1fr]"
+                    "pb-8 md:pl-8  grid min-h-full grid-cols-1 lg:grid-cols-[3fr_1fr]"
                 )}
             >
                 <Form />

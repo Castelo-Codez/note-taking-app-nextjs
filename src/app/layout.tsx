@@ -21,7 +21,7 @@ export default async function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <body
-                className={` ${geistMono.className} ${geistSans.className} ${value} antialiased min-h-screen`}
+                className={` relative ${geistMono.className} ${geistSans.className} ${value} antialiased min-h-screen`}
             >
                 <ThemeProvider
                     attribute="class"

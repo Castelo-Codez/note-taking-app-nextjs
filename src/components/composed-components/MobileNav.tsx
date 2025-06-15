@@ -8,7 +8,7 @@ export default function MobileNav() {
     return (
         <>
             {isMobile && (
-                <nav className=" absolute bottom-0 left-0 w-full h-[50px] px-3 border-t border-border flex items-center">
+                <nav className=" fixed bg-background bottom-0 left-0 w-full h-[50px] px-3 border-t border-border flex items-center">
                     <ul className=" flex  w-full">
                         <li className=" flex-[1] py-2 flex justify-center">
                             <Link href={"/notes/all"}>
