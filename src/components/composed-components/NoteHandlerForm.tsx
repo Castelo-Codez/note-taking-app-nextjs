@@ -1,50 +1,111 @@
 "use client";
 import {CircleAlert, Tag, Timer} from "lucide-react";
 import {Button} from "../ui/button";
+import uniqid from "uniqid";
 import {useIsMobile} from "@/hooks/use-mobile";
 import {cn} from "@/lib/utils";
 import * as z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
-
 import {useForm} from "react-hook-form";
+import {useGlobalState} from "../providers/state-provider";
+import {useRouter} from "next/navigation";
 export default function Form({
     title,
-    lastEdited,
+    lastedited,
     tag,
     subject,
     isnew = true,
+    isarchived = false,
+    id,
 }: {
     title?: string;
-    lastEdited?: string;
+    lastedited?: string;
     tag?: string;
     subject?: string;
     isnew?: boolean;
-    archived?: boolean;
+    isarchived?: boolean;
+    id: string;
 }) {
+    const router = useRouter();
+    const store = useGlobalState(); //@ts-expect-error
+    const {ClearNoteChanges} = store;
+    //@ts-expect-error
+    store.isNoteChange.current.title.old = title as string; //@ts-expect-error
+    store.isNoteChange.current.tag.old = tag as string; //@ts-expect-error
+    store.isNoteChange.current.subject.old = subject as string;
+
+    //@ts-expect-error
+    const {notes, setNewNotes} = store.notesHandler;
     const isMobile = useIsMobile();
     const formSchema = z.object({
-        title: z.string().nonempty().min(4).max(15),
-        tag: z.string().nonempty().min(3).max(15),
+        title: z.string().nonempty().min(4).max(20),
+        tag: z.string().nonempty().min(3).max(20),
         subject: z.string().nonempty().min(5),
     });
 
-    const {handleSubmit, register, formState, setValue} = useForm<
+    const {handleSubmit, register, formState, watch} = useForm<
         z.infer<typeof formSchema>
     >({
         resolver: zodResolver(formSchema),
+        defaultValues: {
+            title: title,
+            tag: tag,
+            subject: subject,
+        },
     });
-
+    const allFields = watch(); //@ts-expect-error
+    store.isNoteChange.current.title.new = allFields.title; //@ts-expect-error
+    store.isNoteChange.current.tag.new = allFields.tag; //@ts-expect-error
+    store.isNoteChange.current.subject.new = allFields.subject;
     const {errors} = formState;
-    if (title && tag && subject) {
-        setValue("title", title);
-        setValue("tag", tag);
-        setValue("subject", subject);
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        ClearNoteChanges();
+        if (values) {
+            if (isnew) {
+                setNewNotes([
+                    ...notes,
+                    {
+                        ...values,
+                        id: uniqid(),
+                        lastedited: `${new Date().getDate()}-${new Date().getMonth()}-${new Date().getFullYear()}`,
+                    },
+                ]);
+                router.replace("http://localhost:3000/notes/all");
+            } else {
+                const updatedNotes = notes.map(
+                    (el: {
+                        title: string;
+                        subject: string;
+                        id: string;
+                        isarchived: boolean;
+                        lastedited: string;
+                    }) => {
+                        if (el.id === id) {
+                            el = {
+                                ...values,
+                                id,
+                                isarchived,
+                                lastedited: `${new Date().getDate()}-${new Date().getMonth()}-${new Date().getFullYear()}`,
+                            };
+                            return el;
+                        } else {
+                            return el;
+                        }
+                    }
+                );
+                setNewNotes(updatedNotes);
+                router.replace("http://localhost:3000/notes/all");
+            }
+        }
     }
-    async function onSubmit(values: z.infer<typeof formSchema>) {}
+
     return (
         <>
             <div className=" px-4 sm:px-8  h-[105vh] sm:h-auto">
-                <form className={cn(isMobile ? "mt-10" : "pt-7")}>
+                <form
+                    className={cn(isMobile ? "mt-10" : "pt-7")}
+                    onSubmit={handleSubmit(onSubmit)}
+                >
                     <div aria-label="input-wrapper" className=" mb-10">
                         <input
                             type="text"
@@ -97,9 +158,10 @@ export default function Form({
                         <input
                             type="text"
                             name="last-edited"
-                            value={true && lastEdited}
+                            value={true && lastedited}
                             className=" block text-[0.7rem]  flex-[1] placeholder:text-[0.7rem]"
                             placeholder="not saved yet!"
+                            disabled
                         />
                     </div>
                     <div aria-label="input-wrapper" className=" mb-3">
@@ -115,27 +177,34 @@ export default function Form({
                             </p>
                         )}
                     </div>
+
+                    {!isMobile && (
+                        <div
+                            className={cn(
+                                "mt-5 flex gap-x-5 sm:border-b lg:border-b-0 sm:pb-4 sm:mb-4 lg:pb-3 lg:mb-0"
+                            )}
+                        >
+                            <Button
+                                className=" px-3 py-0.5 cursor-pointer "
+                                variant={"outline"}
+                                type="button"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                className={cn(" px-10 py-0.5 cursor-pointer")}
+                                disabled={
+                                    errors.subject || errors.tag || errors.title
+                                        ? true
+                                        : false
+                                }
+                            >
+                                {isnew ? "Create New Note" : "Save Changes"}
+                            </Button>
+                        </div>
+                    )}
                 </form>
-                {!isMobile && (
-                    <div
-                        className={cn(
-                            "mt-5 flex gap-x-5 sm:border-b lg:border-b-0 sm:pb-4 sm:mb-4 lg:pb-3 lg:mb-0"
-                        )}
-                    >
-                        <Button
-                            className=" px-3 py-0.5 cursor-pointer "
-                            variant={"outline"}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            className=" px-10 py-0.5 cursor-pointer "
-                            onClick={handleSubmit(onSubmit)}
-                        >
-                            Save
-                        </Button>
-                    </div>
-                )}
             </div>
         </>
     );

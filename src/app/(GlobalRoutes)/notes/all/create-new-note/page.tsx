@@ -10,7 +10,7 @@ export default function CreateNewNote() {
     return (
         <>
             <Nav />
-            <NoteHandler />
+            <NoteHandler isnew={true} />
         </>
     );
 }
