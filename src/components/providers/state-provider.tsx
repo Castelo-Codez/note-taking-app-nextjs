@@ -1,4 +1,6 @@
 "use client";
+import {useRouter as Route} from "next/navigation";
+import {useRouter as Router} from "next/router";
 import React, {createContext, useContext, useState} from "react";
 
 export type Note = {
@@ -19,33 +21,21 @@ export const GlobalStateProvider = ({
 }: {
     children: React.ReactNode;
 }) => {
-    function ClearNoteChanges() {
-        isNoteChange.current.title.old = "";
-        isNoteChange.current.title.new = "";
-        isNoteChange.current.tag.old = "";
-        isNoteChange.current.tag.new = "";
-        isNoteChange.current.subject.old = "";
-        isNoteChange.current.subject.new = "";
-    }
-
-    const isNoteChange = useRef({
-        title: {
-            old: "",
-            new: "",
-        },
-        tag: {
-            old: "",
-            new: "",
-        },
-        subject: {
-            old: "",
-            new: "",
-        },
-    });
     const [notes, setNewNotes] = useState<Note[]>([]);
     const [currentRoute, setNewCurrentRoute] = useState<string>("all notes");
     const [currentRouteIndex, setNewCurrentRouteIndex] = useState<number>(0);
     const [searchKeyword, setNewsearchKeyword] = useState("");
+
+    function GoToRootUrl() {
+        const route = Route();
+        const router = Router();
+        const url = router.pathname;
+        const baseUrl = url.replace(
+            /^(http:\/\/localhost:3000(?:\/[^/]+)*)\/.*/,
+            "$1"
+        );
+        return route.replace(baseUrl);
+    }
     return (
         <GlobalStateContext.Provider
             //@ts-expect-error
@@ -57,8 +47,7 @@ export const GlobalStateProvider = ({
                     setNewCurrentRouteIndex,
                 },
                 searchKeywordHandler: {searchKeyword, setNewsearchKeyword},
-                isNoteChange,
-                ClearNoteChanges,
+                GoToRootUrl,
             }}
         >
             {children}

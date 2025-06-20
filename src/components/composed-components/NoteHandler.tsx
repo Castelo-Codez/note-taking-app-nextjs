@@ -18,7 +18,7 @@ export default function NoteHandler({
     lastedited?: string;
     isarchived?: boolean;
     isnew?: boolean;
-    id: string;
+    id?: string;
 }) {
     const ismobile = useIsMobile();
     return (

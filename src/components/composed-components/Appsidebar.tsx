@@ -12,7 +12,11 @@ export function AppSidebar() {
             <SidebarGroup className=" mb-5  px-3">
                 <ul className=" flex flex-col gap-y-2.5">
                     <li>
-                        <MainLink to="/notes/all" currentRoute="All Notes">
+                        <MainLink
+                            to="/notes/all"
+                            needicon={true}
+                            currentRoute="All Notes"
+                        >
                             <div className=" flex items-center gap-x-2">
                                 <Home width={20} />
                                 <p className=" text-[0.8rem]"> All Notes</p>
@@ -21,6 +25,7 @@ export function AppSidebar() {
                     </li>
                     <li>
                         <MainLink
+                            needicon={true}
                             to="/notes/archived"
                             currentRoute="Archived Notes"
                         >

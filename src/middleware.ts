@@ -1,6 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import {getSessionCookie} from "better-auth/cookies";
-import {geistMono} from "./app/assets/fonts/fonts";
+import { geistMono } from "./app/assets/fonts/fonts";
+
 export default async function middleware(request: NextRequest) {
     const cookieName = "n_t_a_f";
     const expireAt = {

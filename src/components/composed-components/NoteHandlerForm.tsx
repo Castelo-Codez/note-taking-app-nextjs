@@ -8,7 +8,7 @@ import * as z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
 import {useGlobalState} from "../providers/state-provider";
-import {useRouter} from "next/navigation";
+import {useRouter as navigationRouter} from "next/navigation";
 export default function Form({
     title,
     lastedited,
@@ -18,22 +18,17 @@ export default function Form({
     isarchived = false,
     id,
 }: {
-    title?: string;
-    lastedited?: string;
-    tag?: string;
-    subject?: string;
-    isnew?: boolean;
-    isarchived?: boolean;
-    id: string;
+    title?: string | undefined;
+    lastedited?: string | undefined;
+    tag?: string | undefined;
+    subject?: string | undefined;
+    isnew?: boolean | undefined;
+    isarchived?: boolean | undefined;
+    id: string | undefined;
 }) {
-    const router = useRouter();
+    const navrouter = navigationRouter();
     const store = useGlobalState(); //@ts-expect-error
-    const {ClearNoteChanges} = store;
-    //@ts-expect-error
-    store.isNoteChange.current.title.old = title as string; //@ts-expect-error
-    store.isNoteChange.current.tag.old = tag as string; //@ts-expect-error
-    store.isNoteChange.current.subject.old = subject as string;
-
+    const {GoToRootUrl} = store;
     //@ts-expect-error
     const {notes, setNewNotes} = store.notesHandler;
     const isMobile = useIsMobile();
@@ -53,13 +48,23 @@ export default function Form({
             subject: subject,
         },
     });
-    const allFields = watch(); //@ts-expect-error
-    store.isNoteChange.current.title.new = allFields.title; //@ts-expect-error
-    store.isNoteChange.current.tag.new = allFields.tag; //@ts-expect-error
-    store.isNoteChange.current.subject.new = allFields.subject;
+    let month = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    ];
+
     const {errors} = formState;
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        ClearNoteChanges();
         if (values) {
             if (isnew) {
                 setNewNotes([
@@ -67,10 +72,12 @@ export default function Form({
                     {
                         ...values,
                         id: uniqid(),
-                        lastedited: `${new Date().getDate()}-${new Date().getMonth()}-${new Date().getFullYear()}`,
+                        lastedited: `${new Date().getDate()} ${
+                            month[new Date().getMonth() - 1]
+                        } ${new Date().getFullYear()}`,
                     },
                 ]);
-                router.replace("http://localhost:3000/notes/all");
+                navrouter.replace("http://localhost:3000/notes/all");
             } else {
                 const updatedNotes = notes.map(
                     (el: {
@@ -85,7 +92,9 @@ export default function Form({
                                 ...values,
                                 id,
                                 isarchived,
-                                lastedited: `${new Date().getDate()}-${new Date().getMonth()}-${new Date().getFullYear()}`,
+                                lastedited: `${new Date().getDate()} ${
+                                    month[new Date().getMonth() - 1]
+                                } ${new Date().getFullYear()}`,
                             };
                             return el;
                         } else {
@@ -94,7 +103,7 @@ export default function Form({
                     }
                 );
                 setNewNotes(updatedNotes);
-                router.replace("http://localhost:3000/notes/all");
+                navrouter.replace("http://localhost:3000/notes/all");
             }
         }
     }
@@ -188,6 +197,9 @@ export default function Form({
                                 className=" px-3 py-0.5 cursor-pointer "
                                 variant={"outline"}
                                 type="button"
+                                onClick={() => {
+                                    GoToRootUrl();
+                                }}
                             >
                                 Cancel
                             </Button>

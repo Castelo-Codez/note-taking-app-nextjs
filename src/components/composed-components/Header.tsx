@@ -7,13 +7,11 @@ import Logo from "./Logo";
 import {cn} from "@/lib/utils";
 import {useRouter} from "next/navigation";
 import {useGlobalState} from "../providers/state-provider";
+import MainLink from "./MainLink";
 
 export default function Header() {
     const isMobile = useIsMobile();
     const store = useGlobalState();
-    //@ts-expect-error
-    const {setNewCurrentRoute} = store.currentRouteHandler;
-    const router = useRouter();
     return (
         <header
             className={cn(
@@ -26,17 +24,15 @@ export default function Header() {
             {!isMobile && (
                 <div className=" flex gap-x-4 items-center">
                     <Search />
-                    <button
-                        aria-label="settings link"
-                        title="go to settings page"
-                        onClick={() => {
-                            router.replace("http://localhost:3000/settings");
-                            setNewCurrentRoute("settings");
-                        }}
-                        className="flex justify-between items-center p-1  cursor-pointer"
+
+                    <MainLink
+                        to="/settings"
+                        needicon={false}
+                        currentRoute="Settings"
+                        className="flex justify-between items-center p-1 w-fit  cursor-pointer"
                     >
                         <Settings width={20} />
-                    </button>
+                    </MainLink>
                 </div>
             )}
         </header>
