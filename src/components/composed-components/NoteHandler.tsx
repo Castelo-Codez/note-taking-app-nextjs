@@ -39,7 +39,9 @@ export default function NoteHandler({
                         lastedited,
                     }}
                 />
-                {!ismobile && <ChangeStatus isArchived={false} />}
+                {!isnew && !ismobile && (
+                    <ChangeStatus  isArchived={isarchived} id={id} />
+                )}
             </section>
         </>
     );

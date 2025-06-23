@@ -12,7 +12,6 @@ export type Note = {
     tags: string[];
 };
 
-import {useRef} from "react";
 
 export const GlobalStateContext = createContext(null);
 
@@ -26,16 +25,6 @@ export const GlobalStateProvider = ({
     const [currentRouteIndex, setNewCurrentRouteIndex] = useState<number>(0);
     const [searchKeyword, setNewsearchKeyword] = useState("");
 
-    function GoToRootUrl() {
-        const route = Route();
-        const router = Router();
-        const url = router.pathname;
-        const baseUrl = url.replace(
-            /^(http:\/\/localhost:3000(?:\/[^/]+)*)\/.*/,
-            "$1"
-        );
-        return route.replace(baseUrl);
-    }
     return (
         <GlobalStateContext.Provider
             //@ts-expect-error
@@ -47,7 +36,7 @@ export const GlobalStateProvider = ({
                     setNewCurrentRouteIndex,
                 },
                 searchKeywordHandler: {searchKeyword, setNewsearchKeyword},
-                GoToRootUrl,
+              
             }}
         >
             {children}

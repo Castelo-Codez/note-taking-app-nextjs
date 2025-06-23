@@ -1,5 +1,5 @@
 "use client";
-import {CircleAlert, Tag, Timer} from "lucide-react";
+import {CircleAlert, Tag, Timer, Triangle} from "lucide-react";
 import {Button} from "../ui/button";
 import uniqid from "uniqid";
 import {useIsMobile} from "@/hooks/use-mobile";
@@ -8,7 +8,9 @@ import * as z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
 import {useGlobalState} from "../providers/state-provider";
-import {useRouter as navigationRouter} from "next/navigation";
+import {useRouter as navigationRouter, usePathname} from "next/navigation";
+import {BackToRootUrl} from "@/lib/backToRootUrl";
+
 export default function Form({
     title,
     lastedited,
@@ -26,9 +28,10 @@ export default function Form({
     isarchived?: boolean | undefined;
     id: string | undefined;
 }) {
+    const url = usePathname();
+
     const navrouter = navigationRouter();
-    const store = useGlobalState(); //@ts-expect-error
-    const {GoToRootUrl} = store;
+    const store = useGlobalState();
     //@ts-expect-error
     const {notes, setNewNotes} = store.notesHandler;
     const isMobile = useIsMobile();
@@ -129,6 +132,7 @@ export default function Form({
                             </p>
                         )}
                     </div>
+
                     <div aria-label="input-wrapper" className=" mb-10">
                         <div className="flex gap-x-7 sm:gap-x-14 items-center">
                             <div className="flex gap-x-2 ">
@@ -144,7 +148,6 @@ export default function Form({
                                 {...register("tag")}
                             />
                         </div>
-
                         <div className="">
                             {errors.tag && (
                                 <p className=" mt-3 pl-2 flex items-start sm:items-center gap-x-1 text-[0.79rem] text-red-700">
@@ -154,6 +157,19 @@ export default function Form({
                             )}
                         </div>
                     </div>
+                    {isarchived && (
+                        <div className=" mb-10">
+                            <div className="flex gap-x-7 sm:gap-x-14 items-center">
+                                <div className="flex gap-x-2 ">
+                                    <Triangle width={15} />
+                                    <span className=" text-[15px] capitalize">
+                                        Status
+                                    </span>
+                                </div>
+                                <span className=" text-[0.7rem]">Archived</span>
+                            </div>
+                        </div>
+                    )}
                     <div
                         aria-label="input-wrapper"
                         className="flex gap-x-12 sm:gap-x-14 items-center    mb-7  pb-5 border-b "
@@ -198,7 +214,7 @@ export default function Form({
                                 variant={"outline"}
                                 type="button"
                                 onClick={() => {
-                                    GoToRootUrl();
+                                    BackToRootUrl(navrouter, url);
                                 }}
                             >
                                 Cancel
