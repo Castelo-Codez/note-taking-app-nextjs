@@ -78,6 +78,7 @@ export default function Form({
                         lastedited: `${new Date().getDate()} ${
                             month[new Date().getMonth() - 1]
                         } ${new Date().getFullYear()}`,
+                        isarchived: false,
                     },
                 ]);
                 navrouter.replace("http://localhost:3000/notes/all");

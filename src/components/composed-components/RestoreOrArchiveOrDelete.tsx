@@ -16,36 +16,48 @@ export default function ChangeStatus({
     const {notes, setNewNotes} = store.notesHandler;
     const currentUrl = usePathname();
     const navRouter = useRouter();
-    function restoreNote() {
-        return new Promise((res, rej) => {
-            const status = BackToRootUrl(navRouter, currentUrl);
-            if (status) {
-                res(true);
-            } else {
-                rej(false);
-            }
-        });
+    async function restoreNote() {
+        BackToRootUrl(navRouter, currentUrl);
+
+        setTimeout(() => {
+            const newNotes = notes.map((el: {id: string}) => {
+                if (el.id == id) {
+                    return {
+                        ...el,
+                        isarchived: false,
+                    };
+                } else {
+                    return el;
+                }
+            });
+            setNewNotes(newNotes);
+        }, 50);
     }
 
-    function archiveNote() {
-        const newNotes = notes.map((el: {id: string}) => {
-            if (el.id == id) {
-                return {
-                    ...el,
-                    isarchived: true,
-                };
-            } else {
-                return el;
-            }
-        });
+    async function archiveNote() {
+        BackToRootUrl(navRouter, currentUrl);
 
-        BackToRootUrl(navRouter, currentUrl);
-        setNewNotes(newNotes);
+        setTimeout(() => {
+            const newNotes = notes.map((el: {id: string}) => {
+                if (el.id == id) {
+                    return {
+                        ...el,
+                        isarchived: true,
+                    };
+                } else {
+                    return el;
+                }
+            });
+            setNewNotes(newNotes);
+        }, 50);
     }
-    function deleteNote() {
-        const newNotes = notes.filter((el: {id: string}) => el.id !== id);
+    async function deleteNote() {
         BackToRootUrl(navRouter, currentUrl);
-        setNewNotes(newNotes);
+
+        setTimeout(() => {
+            const newNotes = notes.filter((el: {id: string}) => el.id !== id);
+            setNewNotes(newNotes);
+        }, 50);
     }
     return (
         <section className={cn("pb-5 lg:pb-0 lg:border-l sm:pt-2 lg:pt-7")}>
@@ -54,23 +66,7 @@ export default function ChangeStatus({
                     <li>
                         <Button
                             onClick={() => {
-                                restoreNote().then((res) => {
-                                    if (res) {
-                                        const newNotes = notes.map(
-                                            (el: {id: string}) => {
-                                                if (el.id == id) {
-                                                    return {
-                                                        ...el,
-                                                        isarchived: false,
-                                                    };
-                                                } else {
-                                                    return el;
-                                                }
-                                            }
-                                        );
-                                        setNewNotes(newNotes);
-                                    }
-                                });
+                                restoreNote();
                             }}
                             className=" cursor-pointer w-full  flex items-center"
                             variant={"outline"}
@@ -106,4 +102,3 @@ export default function ChangeStatus({
         </section>
     );
 }
-

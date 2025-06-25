@@ -1,10 +1,9 @@
-import Nav from "@/components/composed-components/Nav";
+import MainSection from "@/components/composed-components/MainNoteHanderSection";
 import React from "react";
 export default function Layout({children}: {children: React.ReactNode}) {
     return (
         <>
-            <Nav condition={false} />
-            {children}
+            <MainSection>{children}</MainSection>
         </>
     );
 }

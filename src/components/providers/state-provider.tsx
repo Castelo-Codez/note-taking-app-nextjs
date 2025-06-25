@@ -1,7 +1,7 @@
 "use client";
 import {useRouter as Route} from "next/navigation";
 import {useRouter as Router} from "next/router";
-import React, {createContext, useContext, useState} from "react";
+import React, {createContext, useContext, useEffect, useState} from "react";
 
 export type Note = {
     id: string;
@@ -12,7 +12,6 @@ export type Note = {
     tags: string[];
 };
 
-
 export const GlobalStateContext = createContext(null);
 
 export const GlobalStateProvider = ({
@@ -21,10 +20,13 @@ export const GlobalStateProvider = ({
     children: React.ReactNode;
 }) => {
     const [notes, setNewNotes] = useState<Note[]>([]);
+    const [simulatorNotes, setNewSimulatroNotes] = useState<Note[]>([]);
     const [currentRoute, setNewCurrentRoute] = useState<string>("all notes");
     const [currentRouteIndex, setNewCurrentRouteIndex] = useState<number>(0);
     const [searchKeyword, setNewsearchKeyword] = useState("");
-
+    useEffect(() => {
+        console.log(notes);
+    }, [notes]);
     return (
         <GlobalStateContext.Provider
             //@ts-expect-error
@@ -36,7 +38,6 @@ export const GlobalStateProvider = ({
                     setNewCurrentRouteIndex,
                 },
                 searchKeywordHandler: {searchKeyword, setNewsearchKeyword},
-              
             }}
         >
             {children}
